@@ -25,7 +25,7 @@ export interface TASettings {
 export const DEFAULT_SETTINGS: TASettings = {
     enabled: true,
     language: 'English',
-    maxSuggestions: 3,
+    maxSuggestions: 0,
     enterAcceptKey: true,
     tabAcceptKey: true,
     addSpace: false,
@@ -71,9 +71,9 @@ export class TASettingsTab extends PluginSettingTab {
         // MAX SUGGESTIONS
         new Setting(containerEl)
             .setName('Maximum suggestions')
-            .setDesc('Maximum number of suggestions shown at once (3-10).')
+            .setDesc('Maximum number of suggestions shown at once (0-10). Set to 0 to disable suggestions.')
             .addSlider((slider: SliderComponent) =>
-                slider.setLimits(3, 10, 1)
+                slider.setLimits(0, 10, 1)
                     .setValue(this.plugin.settings.maxSuggestions)
                     .setDynamicTooltip()
                     .onChange(async (val: number) => {
