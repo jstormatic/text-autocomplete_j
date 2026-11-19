@@ -76,6 +76,48 @@ A feature that was specifically implemented for the use of repeated words.
 
 - Automatically learn frequently typed words. Modifiable value for the learning threshold to be added as a custom word (default: 3).
 
+### Suggestion Priority
+Suggestions are ranked using a priority score.
+
+#### Ranking Rules
+Pinned words receive the highest priority.
+Custom words rank above ordinary built-in words.
+Imported words receive their own dictionary priority.
+Frequently accepted suggestions become more likely to appear first.
+Frequently typed built-in words gradually increase their ranking.
+Removed words are removed from the internal suggestion index.
+Renamed words retain their usage history where applicable.
+Accepted Suggestion Counts
+The plugin tracks how many times a word is selected from the autocomplete dropdown.
+
+These counts can be used to:
+
+Identify frequently used words.
+Sort dictionary words by usage.
+Improve suggestion ordering over time.
+Frequently Typed Words
+Built-in words can increase in priority when they are repeatedly completed naturally.
+
+For example, if serial and serious both match seri, repeatedly typing serious will gradually increase its score, allowing it to become the higher-priority suggestion.
+
+### Punctuation-Aware Learning
+Most punctuation is ignored when learning words:
+
+sentence. becomes sentence
+word! becomes word
+example, becomes example
+Common abbreviations are preserved:
+
+etc.
+e.g.
+i.e.
+mr.
+mrs.
+ms.
+dr.
+prof.
+Typing either etc or etc. learns the canonical form etc. rather than creating a competing etc entry.
+
 ### Managing Words
 
 - Search the custom and imported dictionaries.
@@ -204,12 +246,10 @@ The settings panel includes controls for:
 7. Edit the source Text File externally or inside Obsidian.
 8. The plugin keeps suggestions synchronized with dictionary changes.
 
-
 ## Known issues
 
 - Some UI/UX issues with the settings menu as it may jump/scroll to the top of the menu with modifications to the custom list
 
 ## Credits
 
-
-Kind thanks to c-degni/Christ Degni for this plugin. All credits go to them.
+**Kind thanks to c-degni/Christ Degni for this plugin. All credits go to them.**
