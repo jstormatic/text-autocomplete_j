@@ -72,20 +72,22 @@ export function updateSuggestions(suggestions: string[], editor: Editor, plugin:
         const li = createEl('li');
         li.textContent = suggestion;
         li.addEventListener('mousedown', async () => {
+            const acceptedSuggestion = li.textContent?.trim();
+            if (!acceptedSuggestion) return;
             const cursor = editor.getCursor();
             const line = editor.getLine(cursor.line);
             const beforeCursor = line.substring(0, cursor.ch);
             const match = wordBeforeString(beforeCursor);
 
             if (match) {
-                let insert: string = `${suggestion}`; 
+                let insert: string = `${acceptedSuggestion}`; 
                 if (plugin.settings.addSpace) insert += " ";
                 editor.replaceRange(
                     insert,
                     { line: cursor.line, ch: cursor.ch - match[1].length }, // start position (line, position in line)
                     cursor // end position (line, position in line)
                 );
-                await plugin.bumpAcceptedWord(suggestion);
+                await plugin.bumpAcceptedWord(acceptedSuggestion);
             }
 
             destroyTAUI();

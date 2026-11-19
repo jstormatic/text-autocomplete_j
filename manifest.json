@@ -1,6 +1,6 @@
 {
-	"id": "text-autocomplete",
-	"name": "Text Autocomplete",
+	"id": "text-autocomplete_v2",
+	"name": "Text Autocomplete V2",
 	"version": "1.3.0",
 	"minAppVersion": "1.8.10",
 	"description": "Autocomplete text to type more efficiently.",
