@@ -208,3 +208,8 @@ The settings panel includes controls for:
 ## Known issues
 
 - Some UI/UX issues with the settings menu as it may jump/scroll to the top of the menu with modifications to the custom list
+
+## Credits
+
+
+Kind thanks to c-degni/Christ Degni for this plugin. All credits go to them.
