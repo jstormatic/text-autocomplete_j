@@ -23,6 +23,7 @@ export interface TASettings {
     autoReloadImportedDictionaries: boolean;
     learningThreshold: number;
     learnedWordCounts: Record<string, number>;
+    typedWordCounts: Record<string, number>;
     acceptedWordCounts: Record<string, number>;
     pinnedWords: string[];
     pinnedWordScores: Record<string, number>;
@@ -46,6 +47,7 @@ export const DEFAULT_SETTINGS: TASettings = {
     autoReloadImportedDictionaries: true,
     learningThreshold: 3,
     learnedWordCounts: {},
+    typedWordCounts: {},
     acceptedWordCounts: {},
     pinnedWords: [],
     pinnedWordScores: {},

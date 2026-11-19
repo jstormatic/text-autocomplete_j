@@ -11,3 +11,14 @@ export const EMPTY_FILE: Result = { ok: false, reason: 'emptyFile' };
 export const DUPLICATE_FILE: Result = { ok: false, reason: 'duplicateFile' };
 export const EMPTY_WORD: Result = { ok: false, reason: 'emptyWord' };
 export const DUPLICATE_WORD: Result = { ok: false, reason: 'duplicateWord'};
+
+export const PUNCTUATED_WORDS: string[] = [
+    'etc.',
+    'e.g.',
+    'i.e.',
+    'mr.',
+    'mrs.',
+    'ms.',
+    'dr.',
+    'prof.'
+];

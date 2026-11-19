@@ -4,7 +4,7 @@ import { createTAUI, destroyTAUI, updateSuggestions } from './settings/ui';
 import { inCodeBlock, Result, stringInWordOrBeforePunctuation, wordBeforeString } from './utils';
 import { DEFAULT_DICTIONARIES, Dictionary } from './dictionary/dictionary';
 import { Trie } from './dictionary/trie';
-import { ACCEPTED_SUGGESTION_BUMP, CUSTOM_WORD_SCORE, DEFAULT_WORD_SCORE, DUPLICATE_FILE, DUPLICATE_WORD, EMPTY_FILE, IMPORT_WORD_SCORE, NOT_OK, OK } from './constants';
+import { ACCEPTED_SUGGESTION_BUMP, CUSTOM_WORD_SCORE, DEFAULT_WORD_SCORE, DUPLICATE_FILE, DUPLICATE_WORD, EMPTY_FILE, IMPORT_WORD_SCORE, NOT_OK, OK, PUNCTUATED_WORDS } from './constants';
 
 export default class TAPlugin extends Plugin {
 	settings!: TASettings;
@@ -41,6 +41,7 @@ export default class TAPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 		this.settings.learnedWordCounts ??= {};
+		this.settings.typedWordCounts ??= {};
 		this.settings.learningThreshold ??= 3;
 		this.settings.learnFromTyping ??= true;
 		this.settings.updateImportedDictionary ??= true;
@@ -49,6 +50,23 @@ export default class TAPlugin extends Plugin {
 		this.settings.pinnedWords ??= [];
 		this.settings.pinnedWordScores ??= {};
 		this.settings.customDictPageSize ??= 50;
+
+		for (const punctuatedWord of PUNCTUATED_WORDS) {
+			const bareWord = punctuatedWord.slice(0, -1);
+			const bareIndex = this.settings.customDict.indexOf(bareWord);
+			if (bareIndex !== -1 && !this.settings.customDict.includes(punctuatedWord)) {
+				this.settings.customDict[bareIndex] = punctuatedWord;
+				if (this.settings.wordScores[bareWord] !== undefined) {
+					this.settings.wordScores[punctuatedWord] = this.settings.wordScores[bareWord];
+				}
+				if (this.settings.acceptedWordCounts[bareWord] !== undefined) {
+					this.settings.acceptedWordCounts[punctuatedWord] =
+						this.settings.acceptedWordCounts[bareWord];
+				}
+				delete this.settings.acceptedWordCounts[bareWord];
+				delete this.settings.wordScores[bareWord];
+			}
+		}
 	}
 
 	async loadWordTrie() {
@@ -79,6 +97,9 @@ export default class TAPlugin extends Plugin {
 		this.settings.pinnedWords.forEach((word: string) => {
 			this.settings.wordScores[word] = 1000000;
 			this.wordTrie.setWordScore(word, 1000000);
+		});
+		PUNCTUATED_WORDS.forEach((word) => {
+			if (!this.wordTrie.getScore(word)) this.wordTrie.insert(word, CUSTOM_WORD_SCORE);
 		});
 
 		await this.saveSettings();
@@ -116,6 +137,10 @@ export default class TAPlugin extends Plugin {
 		for (const word of this.settings.pinnedWords) {
 			this.settings.wordScores[word] = 1000000;
 			this.wordTrie.setWordScore(word, 1000000);
+		}
+
+		for (const word of PUNCTUATED_WORDS) {
+			if (!this.wordTrie.getScore(word)) this.wordTrie.insert(word, CUSTOM_WORD_SCORE);
 		}
 	}
 
@@ -504,12 +529,26 @@ export default class TAPlugin extends Plugin {
 		const terminated = /[ \t.,!?;:()[\]{}"'“”]/.test(beforeCursor.slice(-1));
 		if (!this.settings.learnFromTyping || (!terminated && !fromEnter)) return;
 
-		const match = beforeCursor.match(/([A-Za-z][A-Za-z'-]{2,})[^A-Za-z'-]*$/);
+		const match = beforeCursor.match(/([A-Za-z][A-Za-z'-]{2,}(?:\.)?)[^A-Za-z'-]*$/);
 		if (!match) return;
 
-		const word = match[1];
+		const typedWord = match[1].trim().toLowerCase();
+		const normalizedWord = typedWord.replace(/\.$/, '');
+		const punctuatedForm = PUNCTUATED_WORDS.find((candidate) =>
+			candidate.slice(0, -1) === normalizedWord
+		);
+		const word = punctuatedForm ?? typedWord.replace(/\.$/, '');
+		const isDefaultWord = DEFAULT_DICTIONARIES.some((dictionary) => dictionary.words.includes(word));
+		if (isDefaultWord) {
+			this.settings.typedWordCounts[word] = (this.settings.typedWordCounts[word] ?? 0) + 1;
+			const score = (this.settings.wordScores[word] ?? DEFAULT_WORD_SCORE) + 1;
+			this.settings.wordScores[word] = score;
+			this.wordTrie.setWordScore(word, score);
+			await this.saveSettings();
+			return;
+		}
+
 		if (this.settings.customDict.includes(word) ||
-			DEFAULT_DICTIONARIES.some((dictionary) => dictionary.words.includes(word)) ||
 			this.settings.dictFiles.some((file) => file.words.includes(word))) {
 			return;
 		}

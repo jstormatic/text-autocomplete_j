@@ -24,5 +24,5 @@ export const stringInWordOrBeforePunctuation = (s: string): boolean => {
 };
 
 export const wordBeforeString = (s: string): RegExpMatchArray | null => {
-    return s.match(/(\b[\w']+)$/);
+    return s.match(/(\b[A-Za-z][A-Za-z'-]*\.?$)/);
 };
