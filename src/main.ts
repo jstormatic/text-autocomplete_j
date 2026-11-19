@@ -136,6 +136,12 @@ export default class TAPlugin extends Plugin {
 
 		if (evt.shiftKey && acceptKeyEnabled) return;
 
+		// Enter/Tab that aren't accept keys: close the dropdown and let the normal behaviour happen
+		if ((evt.key === 'Enter' || evt.key === 'Tab') && !acceptKeyEnabled) {
+			destroyTAUI();
+			return;
+		}
+
 		if (['Enter', 'Tab', 'ArrowDown', 'ArrowUp', 'Escape'].includes(evt.key)) {
 			evt.preventDefault();
 
