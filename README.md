@@ -246,9 +246,112 @@ The settings panel includes controls for:
 7. Edit the source Text File externally or inside Obsidian.
 8. The plugin keeps suggestions synchronized with dictionary changes.
 
-## Known issues
+---
 
-- Some UI/UX issues with the settings menu as it may jump/scroll to the top of the menu with modifications to the custom list
+## 25/11/2026 Updates
+
+This version expands Text Autocomplete with improved learning, phrase handling, dictionary synchronization, ranking, statistics, and a redesigned settings interface.
+
+### Improved Suggestions
+
+- Support for autocomplete after additional words on the same line.
+- Suggested phrases can contain spaces.
+- Optional autocomplete inside:
+  - Quotation marks
+  - Apostrophes
+  - Square brackets
+  - Braces
+  - Parentheses
+- Continue displaying alternatives when **Maximum suggestions** is set to `1`.
+- Use nearby words and note context to improve suggestion ordering.
+- Suggestions remain disabled inside code blocks.
+- Suggestions can work before Obsidian-inserted closing delimiters.
+
+### Word Learning
+
+- Automatically learn frequently typed words and phrases.
+- Manually add a learned word or phrase from the command palette.
+- Configure the number of uses required before a word is learned.
+- Prevent unwanted words from being learned through an ignored-word list.
+- Recover ignored words after enough intentional completions.
+- Track recently learned words and the most recently learned entry.
+- Optional chime when a new word is learned.
+- Protect imported and built-in dictionary words from being incorrectly learned or modified.
+- Normalize punctuation while learning common words and abbreviations.
+- Experimental replacement detection for distinguishing intentional rewrites from accidental deletions.
+
+### Dictionary Improvements
+
+- Import both `.txt` and `.md` files.
+- Support one word or phrase per line.
+- View the source filename and path for imported dictionaries.
+- Remove individual imported dictionaries.
+- Detect duplicate imports and reject invalid or empty files.
+- Add, edit, pin, search, sort, remove, reset, and export custom words.
+- Edit words inline without losing their usage history.
+- Perform bulk selection and removal.
+- Undo the latest removal.
+- Keep imported source files synchronized when words are added, edited, removed, or reset.
+- Reload dictionaries manually or watch external source files for changes.
+- Rebuild the internal suggestion index after dictionary updates.
+
+### Ranking and Usage Tracking
+
+- Track accepted suggestions and frequently typed words.
+- Increase word priority through repeated acceptance or natural completion.
+- Pin important custom or imported words.
+- Use context-based ranking when enabled.
+- Rename dictionary entries while retaining usage history where possible.
+- Display each word’s priority score, accepted-suggestion count, source, and pinned state.
+- Remove deleted words from the active suggestion index immediately.
+
+### New Statistics Dashboard
+
+- Display total suggestions accepted.
+- Track newly learned, ignored, and deleted words.
+- Show first-use information.
+- Visualize the most frequently accepted words.
+- Display suggestion-acceptance activity by day and hour.
+- Group accepted words by short, medium, and long length.
+- Show recently learned words.
+- Display a paginated word-priority ranking.
+- Reset statistics from the settings panel.
+
+### Settings Interface Redesign
+
+- Added a prominent Text Autocomplete title and description.
+- Organized settings into consistent category cards:
+  - General
+  - Suggestions
+  - Punctuation
+  - Learning
+  - Imported Dictionaries
+  - Custom Dictionary
+- Grouped learned and ignored word controls within their respective settings.
+- Added consistent heading lines, borders, spacing, and themed buttons.
+- Improved pagination for custom words, ignored words, accepted words, and priority rankings.
+- Added adjustable page sizes for larger dictionaries.
+- Prevented pagination from moving lists to unrelated parts of the settings page.
+- Added consistent hover and disabled states for all pagination controls.
+- Improved responsive behavior and list scrolling for larger dictionaries.
+
+### Additional Commands and Controls
+
+New utility commands include controls for:
+
+- Reloading dictionaries.
+- Adding learned words manually.
+- Removing or ignoring the most recently learned word.
+- Pinning or unpinning the most recently learned word.
+- Testing the learned-word chime.
+- Adding ignored words.
+- Removing ignored words.
+- Resetting statistics.
+
+### Maintenance
+
+- Removed unused state, obsolete cleanup code, and unnecessary implementation fragments.
+- Rebuilt the production bundle and verified the TypeScript build successfully.
 
 ## Credits
 
