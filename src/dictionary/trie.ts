@@ -76,7 +76,7 @@ export default class Trie {
 
     findWordsWithPrefix(prefix: string, limit: number = Infinity, caseSensitive: boolean) : string[] {
         let tmp: TrieNode = this.root;
-        const normalized: string = prefix.toLowerCase();
+        const normalized: string = prefix.toLowerCase().trim();
         for (const char of normalized) { 
             if (!tmp.children[char]) return [];
             tmp = tmp.children[char];

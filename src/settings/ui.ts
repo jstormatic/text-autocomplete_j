@@ -1,6 +1,6 @@
 import { ViewPlugin, ViewUpdate, PluginValue } from '@codemirror/view';
 import { Editor } from 'obsidian';
-import { stringInWordOrBeforePunctuation, wordBeforeString } from 'src/utils';
+import { closingDelimiterAfterCursor, stringInWordOrBeforePunctuation, wordBeforeString } from 'src/utils';
 import TAPlugin from 'src/main';
 
 let dropdownEl: HTMLUListElement | null = null;
@@ -35,7 +35,8 @@ export function createTAUI() {
                     const beforeCursor: string = line.substring(0, cursor - lineStart); // Current line up to cursor
                     const afterCursor: string = line.substring(cursor - lineStart);
 
-                    if (stringInWordOrBeforePunctuation(afterCursor) || !wordBeforeString(beforeCursor)) {
+                    if (stringInWordOrBeforePunctuation(afterCursor) ||
+                        !wordBeforeString(beforeCursor)) {
                         destroyTAUI();
                         this.lastCursor = cursor;
                         return;
@@ -77,7 +78,17 @@ export function updateSuggestions(suggestions: string[], editor: Editor, plugin:
             const cursor = editor.getCursor();
             const line = editor.getLine(cursor.line);
             const beforeCursor = line.substring(0, cursor.ch);
-            const match = wordBeforeString(beforeCursor);
+            const match = wordBeforeString(
+                beforeCursor,
+                plugin.settings.punctuationAutocomplete,
+                {
+                    quotes: plugin.settings.punctuationQuotes,
+                    apostrophes: plugin.settings.punctuationApostrophes,
+                    squareBrackets: plugin.settings.punctuationSquareBrackets,
+                    braces: plugin.settings.punctuationBraces,
+                    parentheses: plugin.settings.punctuationParentheses
+                }
+            );
 
             if (match) {
                 let insert: string = `${acceptedSuggestion}`; 
